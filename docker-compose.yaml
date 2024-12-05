@@ -1,0 +1,134 @@
+version: '3'
+
+volumes:
+  prometheus_data:
+    driver: local
+  grafana_data:
+    driver: local
+  influxdb_data:
+    driver: local
+  postgres_data:
+    driver: local
+
+networks:
+  monitoring:
+    driver: bridge
+
+services:
+  prometheus:
+    container_name: prometheus
+    image: prom/prometheus
+    restart: unless-stopped
+    volumes:
+      - prometheus_data:/prometheus
+      - ./config/prometheus/prometheus.yml:/etc/prometheus/prometheus.yml
+    networks:
+      - monitoring
+    ports:
+      - 9090:9090
+
+  snmp-exporter:
+    container_name: snmp-exporter
+    image: prom/snmp-exporter
+    restart: unless-stopped
+    networks:
+      - monitoring
+    ports:
+      - "9116:9116"
+      - "161:161/udp" 
+    volumes:
+      - ./config/snmp/snmp.yml:/etc/snmp_exporter/snmp.yml
+
+  grafana: # untuk visualisasi data
+    image: grafana/grafana:9.5.5
+    container_name: grafana
+    restart: unless-stopped
+    environment:
+      - GF_SECURITY_ADMIN_USER=admin
+      - GF_SECURITY_ADMIN_PASSWORD=admin
+      - GF_INSTALL_PLUGINS=agenty-flowcharting-panel
+      - GF_FEATURE_TOGGLES_ANGULAR_SUPPORT_ENABLED=true
+    volumes:
+      - grafana_data:/var/lib/grafana/
+      - ./config/grafana/grafana.ini:/etc/grafana/grafana.ini
+      - ./config/grafana/provisioning/datasources:/etc/grafana/provisioning/datasources
+    ports:
+      - "3000:3000"
+
+  node_exporter: # untuk monitoring server
+    image: quay.io/prometheus/node-exporter:latest
+    container_name: node_exporter
+    restart: unless-stopped
+    networks:
+      - monitoring
+    ports:
+      - "1700:9100"
+
+  cadvisor: # untuk monitoring docker
+    image: gcr.io/cadvisor/cadvisor:latest
+    container_name: cadvisor
+    restart: unless-stopped
+    ports:
+      - 8081:8080
+    networks:
+      - monitoring
+    volumes:
+      - /:/rootfs:ro  # Path absolut untuk mount root filesystem
+      - /var/run:/var/run:rw
+      - /sys:/sys:ro
+      - /var/lib/docker/:/var/lib/docker:ro
+
+  influxdb:
+    image: influxdb:2.1.1
+    container_name: influxdb
+    volumes:
+      - influxdb_data:/var/lib/influxdb2:rw
+    env_file:
+      - ./tig-stack/.env
+    entrypoint: ["./entrypoint.sh"]
+    restart: on-failure:10
+    ports:
+      - 8086:8086
+
+  telegraf:
+    image: telegraf:1.19
+    container_name: telegraf
+    volumes:
+      - ./tig-stack/telegraf/telegraf.conf:/etc/telegraf/telegraf.conf:rw
+    env_file:
+      - ./tig-stack/.env
+    depends_on:
+      - influxdb
+
+  # Tambahkan service Django
+  # django:
+  #   image: django-docker:latest  # Nama image Django yang Anda buat
+  #   container_name: django_app
+  #   restart: unless-stopped
+  #   build:
+  #     context: .  # Pastikan Dockerfile ada di root direktori
+  #   command: python manage.py runserver 0.0.0.0:8000
+  #   volumes:
+  #     - .:/app  # Sinkronisasi folder proyek ke dalam container
+  #   networks:
+  #     - monitoring
+  #   ports:
+  #     - "8000:8000"
+  #   depends_on:
+  #     - postgres  # Pastikan PostgreSQL sudah jalan sebelum Django
+
+  # Tambahkan service PostgreSQL untuk Django
+  # postgres:
+  #   image: postgres:13
+  #   container_name: postgres
+  #   restart: unless-stopped
+  #   environment:
+  #     POSTGRES_USER: your_user
+  #     POSTGRES_PASSWORD: your_password
+  #     POSTGRES_DB: your_db_name
+  #   volumes:
+  #     - postgres_data:/var/lib/postgresql/data
+  #   networks:
+  #     - monitoring
+  #   ports:
+  #     - "5432:5432"

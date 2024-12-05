@@ -1,0 +1,187 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Guardify</title>
+    <!-- Link to your custom CSS -->
+    <link rel="stylesheet" href="css.css">
+    <!-- Bootstrap CSS -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <style>
+        body {
+            background-color: #121212;
+            background-image: url('Background Atas.png');
+            background-size: cover;
+            background-position: top center;
+            background-repeat: no-repeat;
+            background-attachment: fixed;
+            font-family: 'Arial', sans-serif;
+            color: #fff;
+        }
+
+        .button {
+            background-color: #9308ba;
+            color: #fff;
+            padding: 15px 30px;
+            border: none;
+            border-radius: 35px;
+            font-size: 25px;
+            cursor: pointer;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+            transition: all 0.3s ease;
+        }
+
+        .meet-features {
+            text-align: left;
+            padding: 20px;
+        }
+
+        .hero {
+            padding: 50px 20px;
+            text-align: center;
+        }
+        
+    .long-box {
+        width: 100%;
+        height: 100px; /* Menetapkan tinggi yang cukup untuk menampilkan gambar */
+        display: flex;
+        flex-wrap: nowrap; /* Gambar tidak akan dipaksa untuk membungkus ke baris baru */
+        justify-content: flex-start; /* Mengatur gambar mulai dari kiri */
+        margin-top: 30px;
+        background-color: rgba(255, 255, 255, 0.8); /* Latar belakang semi-transparan */
+        padding: 10px 0;
+        border-radius: 10px;
+        box-shadow: 0 4px 8px rgba(104, 56, 56, 0.2);
+        overflow: hidden; /* Menyembunyikan gambar yang melampaui area container */
+    }
+
+.image-wrapper {
+    display: flex;
+    width: 200%; /* Membuat wrapper dua kali lebar container */
+    animation: slide 20s linear infinite; /* Animasi bergerak dari kiri ke kanan */
+}
+
+/* Animasi bergerak dari kiri ke kanan */
+@keyframes slide {
+    0% {
+        transform: translateX(0); /* Posisi awal */
+    }
+    100% {
+        transform: translateX(-50%); /* Bergerak ke kiri seluruhnya */
+    }
+}
+
+.long-box img {
+    width: 10%; /* Setiap gambar akan mengambil 10% dari lebar container */
+    height: auto;
+    margin: 0 10px; /* Menambahkan jarak antara gambar */
+    object-fit: contain; /* Membuat gambar tetap proporsional */
+    max-width: 100px; /* Maksimal lebar gambar */
+}
+
+/* Gambar yang memiliki kelas 'large' akan lebih besar */
+.long-box img.large {
+    width: 15%; /* Gambar ini akan mengambil 15% dari lebar container */
+    max-width: 150px; /* Maksimal lebar gambar */
+}
+
+    </style>
+</head>
+<body>
+    <div class="header d-flex justify-content-between align-items-center p-3">
+        <div class="logo">
+            <img src="monitora.png" alt="Logo" style="width: 70px; height: auto;">
+        </div>
+        <nav>
+            <ul class="nav">
+                <li class="nav-item"><a href="#Product" class="nav-link text-light">Product</a></li>
+                <li class="nav-item"><a href="#OurTeam" class="nav-link text-light">Our Team</a></li>
+                <li class="nav-item"><a href="#SignUp" class="nav-link text-light">Sign Up</a></li>
+            </ul>
+        </nav>
+    </div>
+
+    <div class="hero">
+        <h1>"Optimize your network with automation<br>solutions for simpler and more efficient<br>device and service management"</h1>
+        <p>Streamline your network with AutoManage and simplify<br>device and service management with smart automation.</p>
+        <button class="button">Login Now</button><br><br>
+
+         <!-- Sponsor Section -->
+    <div class="long-box mt-5">
+        <div class="image-wrapper">
+            <img src="Logo Docker.png" alt="Sponsor 1">
+            <img src="Logo Ubuntu.png" alt="Sponsor 2">
+            <img src="Logo Django.png" alt="Sponsor 3">
+            <img src="Logo Grafana.png" alt="Sponsor 4" class="large">
+            <img src="Logo Prometheus.png" alt="Sponsor 5" class="large">
+            <img src="Logo Kubernetes.png" alt="Sponsor 6" class="large">
+            <img src="Logo Jenkins.png" alt="Sponsor 7">
+            <img src="Logo Ansible.png" alt="Sponsor 8">
+            <img src="Logo NGINX.png" alt="Sponsor 9">
+            <img src="Logo PostgreSQL.png" alt="Sponsor 10">
+            
+            <!-- Duplicate for infinite scrolling -->
+            <img src="Logo Docker.png" alt="Sponsor 1">
+            <img src="Logo Ubuntu.png" alt="Sponsor 2">
+            <img src="Logo Django.png" alt="Sponsor 3">
+            <img src="Logo Grafana.png" alt="Sponsor 4" class="large">
+            <img src="Logo Prometheus.png" alt="Sponsor 5" class="large">
+            <img src="Logo Kubernetes.png" alt="Sponsor 6" class="large">
+            <img src="Logo Jenkins.png" alt="Sponsor 7">
+            <img src="Logo Ansible.png" alt="Sponsor 8">
+            <img src="Logo NGINX.png" alt="Sponsor 9">
+            <img src="Logo PostgreSQL.png" alt="Sponsor 10">
+        </div>
+    </div>
+    <div class="container mt-5">
+        <!-- Meet Features Section -->
+        <div class="meet-features">
+            <h1>Our Features</h1>
+            <h2>What features can you use?</h2>
+        </div>
+    </div>
+
+
+    
+
+        <!-- Cards Section -->
+        <div class="row mt-4">
+            <div class="col-md-4">
+                <div class="card">
+                    <img src="image.png" class="card-img-top" alt="Feature 1">
+                    <div class="card-body">
+                        <h5 class="card-title">Multivendor Device Monitoring</h5>
+                        <p class="card-text">Description of feature 1.</p>
+                        <a href="#" class="btn btn-primary">Learn More</a>
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-4">
+                <div class="card">
+                    <img src="Logo One Touch Push.png" class="card-img-top" alt="Feature 2">
+                    <div class="card-body">
+                        <h5 class="card-title">Feature 2</h5>
+                        <p class="card-text">Description of feature 2.</p>
+                        <a href="#" class="btn btn-primary">Learn More</a>
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-4">
+                <div class="card">
+                    <img src="Logo Alerting.png" class="card-img-top" alt="Feature 3">
+                    <div class="card-body">
+                        <h5 class="card-title">Feature 3</h5>
+                        <p class="card-text">Description of feature 3.</p>
+                        <a href="#" class="btn btn-primary">Learn More</a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+
+    <!-- Bootstrap JS -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+</body>
+</html>
