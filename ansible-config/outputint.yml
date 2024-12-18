@@ -1,0 +1,20 @@
+---
+- name: Save interfaces configuration
+  hosts: all
+  gather_facts: false
+  connection: local
+
+  tasks:
+    - name: run multiple commands
+      ios_command:
+        commands:
+          - show ip int brief
+      register: print_output
+
+    - debug:
+        var: print_output.stdout_lines
+
+    - name: save output to a file
+      copy:
+        content: "{{ print_output.stdout[0] }}" # sebuah daftar (list) yang berisi hasil output dari perintah yang dijalankan. 
+        dest: "./interfaces/{{ inventory_hostname }}.txt" # lokasi file akan disimpan

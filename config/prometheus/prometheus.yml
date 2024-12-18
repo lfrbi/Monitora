@@ -18,6 +18,7 @@ scrape_configs:
           - "10.11.10.2:161"   # SNMP Device 1 Mikrotik-Router
           - "10.11.10.3:161"   # SNMP Device 2 Mikrotik-Router
           - "10.11.10.4:161" # SNMP Device 1 Switch cisco
+          - "192.168.10.1:161" # SNMP Device 3 Mikrobit Router adaptive
 
     relabel_configs:
       - source_labels: [__address__]
@@ -25,7 +26,7 @@ scrape_configs:
       - source_labels: [__param_target]
         target_label: instance
       - target_label: __address__
-        replacement: "172.20.255.250:9116"  # IP dan port dari SNMP exporter
+        replacement: "172.20.255.247:9116"  # IP dan port dari SNMP exporter
 
   - job_name: "node_exporter"
     static_configs:

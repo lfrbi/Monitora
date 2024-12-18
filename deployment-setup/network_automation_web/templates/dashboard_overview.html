@@ -1,0 +1,116 @@
+{% load static %}
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+    <link rel="stylesheet" href="{% static 'images/css/netconf.css' %}">
+</head>
+<body>
+    
+    <div class="sidebar">
+        <ul>
+            <li class="menu-item"><a href="#"><img src="{% static 'images/alfarabi.png' %}" alt="Dashboard Logo" class="logo-menu"> {{username}}</a></li>
+            <li class="menu-item"><a href="#"><img src="{% static 'images/dashboard_logo.png' %}" alt="Dashboard Logo" class="logo-menu"> Dashboard</a></li>
+            <li class="menu-item"><a href="#"><img src="{% static 'images/network_config.png' %}" alt="Network Configuration Logo" class="logo-menu"> Configuration </a></li>
+            <li class="menu-item"><a href="#"><img src="{% static 'images/monitoring.png' %}" alt="Monitoring Device Logo" class="logo-menu"> Monitoring Device</a></li>
+            <li class="menu-item"><a href="#"><img src="{% static 'images/member.png' %}" alt="Member Logo" class="logo-menu"> Member</a></li>
+            <li class="menu-item"><a href="#"><img src="{% static 'images/list.png' %}" alt="Device List Logo" class="logo-menu"> Device List</a></li>
+            <li class="menu-item"><a href="#"><img src="{% static 'images/Alerting.png' %}" alt="Alerting Logo" class="logo-menu"> Alerting</a></li>
+            <li class="menu-item"><a href="#"><img src="{% static 'images/report.png' %}" alt="Report Generate Logo" class="logo-menu"> Report Generate</a></li>
+            <li class="menu-item"><a href="#"><img src="{% static 'images/history.png' %}" alt="History Logo" class="logo-menu"> History</a></li>
+        </ul>
+
+    </div>
+    <div class="content">
+        <div class="header">
+            <h1>Network Configuration Management</h1>
+        </div>
+        <!DOCTYPE html>
+        <html lang="en">
+        <head>
+            <meta charset="UTF-8">
+            <meta name="viewport" content="width=device-width, initial-scale=1.0">
+            <title>Device Configuration</title>
+            <link rel="stylesheet" href="styles.css">
+        </head>
+        <body>
+            <div class="container">
+                <div class="box">
+                    <!-- Device Type Dropdown -->
+                    <label for="deviceType">Type Device</label>
+                    <select id="deviceType" class="form-control">
+                        {% for device in all_device %}
+                            <option value="{{ device.vendor }}">{{ device.vendor }}</option>
+                        {% endfor %}
+                    </select>
+
+
+
+                        <!-- Tambahkan pilihan lain sesuai kebutuhan -->
+                    </select>
+        
+                    <!-- Target IP Selection -->
+                    <label for="deviceType">Target Ip address</label>
+                    <select id="deviceType" class="form-control">
+                        {% for device in all_device %}
+                            <option value="{{ device.vendor }}">{{ device.ip_address }}</option>
+                        {% endfor %}
+                    </select>
+
+
+
+
+                        <!-- Tambahkan IP lainnya -->
+                    </select>
+                    <button id="addTarget" class="btn">+</button>
+        
+                    <!-- Command Dropdown -->
+                    <label for="command">Command</label>
+                    <select id="command" class="form-control">
+                        <option value="show_ip_brief">show ip interface brief</option>
+                        <!-- Tambahkan perintah lain sesuai kebutuhan -->
+                    </select>
+        
+                    <!-- Command Output -->
+                    <h4>Command output</h4>
+                    <table class="output-table">
+                        <thead>
+                            <tr>
+                                <th>Interface</th>
+                                <th>IP-Address</th>
+                                <th>OK?</th>
+                                <th>Status</th>
+                                <th>Protocol</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr>
+                                <td>GigabitEthernet0/0</td>
+                                <td>172.11.0.1</td>
+                                <td>YES</td>
+                                <td>up</td>
+                                <td>up</td>
+                            </tr>
+                            <!-- Tambahkan data lain sesuai output yang diinginkan -->
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        
+            <script src="script.js"></script>
+        </body>
+        </html>
+        
+        <div class="footer">
+            &copy; 2023 Your Company
+        </div>
+    </div>
+
+
+    
+    
+</body>
+</html>

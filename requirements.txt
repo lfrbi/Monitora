@@ -1,0 +1,11 @@
+asgiref==3.4.1
+Django==3.2.25
+gunicorn==21.2.0
+importlib-metadata==4.8.3
+packaging==21.3
+psycopg2-binary==2.9.8
+pyparsing==3.0.7
+pytz==2024.2
+sqlparse==0.4.4
+typing_extensions==4.1.1
+zipp==3.6.0

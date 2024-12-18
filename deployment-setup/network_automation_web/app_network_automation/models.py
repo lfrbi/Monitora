@@ -10,11 +10,17 @@ class Device(models.Model):
     # models.IntegerField == integer
     
     # Pilihan vendor
-    VENDOR_CHOICES = (('mikrotik', 'Mikrotik'), ('cisco', 'Cisco'))
+    VENDOR_CHOICES = (('mikrotik', 'Mikrotik'), ('cisco', 'Cisco'),)
     vendor = models.CharField(max_length=255, choices=VENDOR_CHOICES)  # Tabel Vendor
 
     def __str__(self):
         return "{}. {}".format(self.id, self.ip_address)  # Menampilkan ID dan IP Address perangkat
+
+class Vendor(models.Model):
+    name = models.CharField(max_length=255)
+
+    def __str__(self):
+        return self.name
 
 
 class Log(models.Model):  # Perbaiki models.model menjadi models.Model

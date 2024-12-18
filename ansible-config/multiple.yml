@@ -1,0 +1,16 @@
+---
+- name: ios command multiple commands
+  hosts: all
+  gather_facts: false
+  connection: local
+
+  tasks:
+    - name: run multiple commands
+      ios_command:
+        commands:
+        - show ip int brief
+        - show ssh
+
+      register: print_output
+    
+    - debug: var=print_output.stdout_lines

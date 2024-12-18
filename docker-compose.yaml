@@ -78,27 +78,27 @@ services:
       - /sys:/sys:ro
       - /var/lib/docker/:/var/lib/docker:ro
 
-  influxdb:
-    image: influxdb:2.1.1
-    container_name: influxdb
-    volumes:
-      - influxdb_data:/var/lib/influxdb2:rw
-    env_file:
-      - ./tig-stack/.env
-    entrypoint: ["./entrypoint.sh"]
-    restart: on-failure:10
-    ports:
-      - 8086:8086
+  # influxdb:
+  #   image: influxdb:2.1.1
+  #   container_name: influxdb
+  #   volumes:
+  #     - influxdb_data:/var/lib/influxdb2:rw
+  #   env_file:
+  #     - ./tig-stack/.env
+  #   entrypoint: ["./entrypoint.sh"]
+  #   restart: on-failure:10
+  #   ports:
+  #     - 8086:8086
 
-  telegraf:
-    image: telegraf:1.19
-    container_name: telegraf
-    volumes:
-      - ./tig-stack/telegraf/telegraf.conf:/etc/telegraf/telegraf.conf:rw
-    env_file:
-      - ./tig-stack/.env
-    depends_on:
-      - influxdb
+  # telegraf:
+  #   image: telegraf:1.19
+  #   container_name: telegraf
+  #   volumes:
+  #     - ./tig-stack/telegraf/telegraf.conf:/etc/telegraf/telegraf.conf:rw
+  #   env_file:
+  #     - ./tig-stack/.env
+  #   depends_on:
+  #     - influxdb
 
   # Tambahkan service Django
   # django:

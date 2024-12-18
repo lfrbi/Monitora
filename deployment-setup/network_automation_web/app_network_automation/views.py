@@ -19,13 +19,14 @@ def home(request):
     return render(request, 'home.html', context)  # Render halaman dengan data
 
 
-# View untuk menampilkan daftar perangkat
+# View untuk menampilkan list perangkat
 def devices(request):
     all_device = Device.objects.all()  # Mengambil data perangkat dari model Device
 
     context = {  # Data untuk template
         'all_device': all_device,  # Menampilkan semua perangkat
     }
+
 
     return render(request, 'devices.html', context)  # Render halaman daftar perangkat
 
@@ -80,6 +81,13 @@ def configure(request):
             'devices': devices,
             'mode': 'Configure',  # Menandakan mode konfigurasi
         }
+        # Tambahkan daftar vendor ke context
+        vendors = [choice[1] for choice in Device.VENDOR_CHOICES]
+        context = {
+        'devices': devices,
+        'mode': 'Configure',
+        'vendors': vendors,  # Kirim daftar vendor
+}
         return render(request, 'config.html', context)  # Render halaman konfigurasi perangkat
 
 
@@ -145,5 +153,12 @@ def log(request):
 
 # View untuk halaman dashboard overview
 def dashboard_overview(request):
+    all_device = Device.objects.all()  # Mengambil data perangkat dari model Device
+
+    context = {  # Data untuk template
+        'all_device': all_device,  # Menampilkan semua perangkat
+    }
+
+    return render(request, 'dashboard_overview.html', context)  # Render halaman daftar perangkat
     
-    return render(request, 'dashboard_overview.html')
+    
