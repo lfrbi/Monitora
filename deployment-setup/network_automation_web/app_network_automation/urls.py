@@ -8,6 +8,9 @@ urlpatterns = [
     path('verify_config', views.verify_config, name='verify_config'),
     path('log', views.log, name='log'),
     path('dashboard_overview', views.dashboard_overview, name='dashboard_overview'),
+    path('add-device/', views.add_device, name='add_device'),
+    path('device-list/', views.device_list, name='device_list'),
+
 
 
 

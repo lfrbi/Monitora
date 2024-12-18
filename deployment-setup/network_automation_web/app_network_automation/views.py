@@ -1,9 +1,11 @@
 from django.shortcuts import render, HttpResponse, get_object_or_404, redirect
-from .models import Device, Log
+from .models import Device, Log, DeviceForm
 import datetime
 import paramiko
 import time
 from datetime import datetime
+# from .forms import DeviceForm
+
 
 # View untuk halaman utama
 def home(request):
@@ -155,10 +157,37 @@ def log(request):
 def dashboard_overview(request):
     all_device = Device.objects.all()  # Mengambil data perangkat dari model Device
 
+
+
     context = {  # Data untuk template
         'all_device': all_device,  # Menampilkan semua perangkat
     }
 
+    
+
     return render(request, 'dashboard_overview.html', context)  # Render halaman daftar perangkat
     
     
+def add_device(request):
+    if request.method == 'POST':
+        form = DeviceForm(request.POST)
+        if form.is_valid():
+            # Validasi: Pastikan IP tidak tercampur antar vendor
+            vendor = form.cleaned_data['vendor']
+            ip_address = form.cleaned_data['ip_address']
+
+            if Device.objects.filter(vendor=vendor, ip_address=ip_address).exists():
+                form.add_error('ip_address', 'This IP Address already exists for the selected vendor.')
+            else:
+                form.save()
+                return redirect('device_list')  # Redirect ke halaman daftar perangkat
+
+    else:
+        form = DeviceForm()
+
+    return render(request, 'add_device.html', {'form': form})
+
+
+def device_list(request):
+    devices = Device.objects.all()
+    return render(request, 'device_list.html', {'devices': devices})

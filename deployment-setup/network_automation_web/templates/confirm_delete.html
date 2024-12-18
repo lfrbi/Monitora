@@ -1,0 +1,14 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Delete Device</title>
+</head>
+<body>
+    <h1>Are you sure you want to delete {{ device.hostname }} ({{ device.ip_address }})?</h1>
+    <form method="post">
+        {% csrf_token %}
+        <button type="submit" class="btn btn-danger">Yes, Delete</button>
+        <a href="{% url 'device_list' %}" class="btn btn-secondary">Cancel</a>
+    </form>
+</body>
+</html>

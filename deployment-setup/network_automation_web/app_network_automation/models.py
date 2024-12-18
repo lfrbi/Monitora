@@ -1,4 +1,5 @@
 from django.db import models
+from django import forms
 
 class Device(models.Model):
     ip_address = models.CharField(max_length=255)  # Tabel IP Address
@@ -32,3 +33,17 @@ class Log(models.Model):  # Perbaiki models.model menjadi models.Model
 
     def __str__(self):
         return "{}. {} - {}".format(self.target, self.action, self.status)
+
+class DeviceForm(forms.ModelForm):
+    class Meta:
+        model = Device
+        fields = ['ip_address', 'hostname', 'username', 'password', 'ssh_port', 'vendor']
+
+        widgets = {
+            'ip_address': forms.TextInput(attrs={'class': 'form-control', 'placeholder': 'Enter IP Address'}),
+            'hostname': forms.TextInput(attrs={'class': 'form-control', 'placeholder': 'Enter Hostname'}),
+            'username': forms.TextInput(attrs={'class': 'form-control', 'placeholder': 'Enter Username'}),
+            'password': forms.PasswordInput(attrs={'class': 'form-control', 'placeholder': 'Enter Password'}),
+            'ssh_port': forms.NumberInput(attrs={'class': 'form-control', 'placeholder': 'Enter SSH Port'}),
+            'vendor': forms.Select(attrs={'class': 'form-control'}),
+        }
