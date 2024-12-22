@@ -1,0 +1,105 @@
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+    font-family: 'Arial', sans-serif;
+}
+
+body {
+    background-image: url('images-signup/background.png');
+    background-size: cover;
+    background-position: center;
+    background-repeat: no-repeat;
+    height: 100vh;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    background-color: #f0f2f5;
+}
+
+.container {
+    width: 100%;
+    max-width: 400px;
+}
+
+.signup-form {
+    background-color: rgba(138, 79, 255, 0.3);
+    backdrop-filter: blur(10px);
+    border-radius: 10px;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+    padding: 30px;
+    text-align: center;
+    border: 1px solid rgba(255, 255, 255, 0.2);
+}
+
+.signup-form h1 {
+    margin-bottom: 25px;
+    color: white;
+    font-size: 24px;
+}
+
+.form-group {
+    margin-bottom: 15px;
+    text-align: left;
+}
+
+.form-control {
+    width: 100%;
+    padding: 10px;
+    border: 1px solid rgba(255, 255, 255, 0.3);
+    border-radius: 5px;
+    font-size: 16px;
+    background-color: rgba(255, 255, 255, 0.2);
+    color: white;
+}
+
+.form-control::placeholder {
+    color: rgba(255, 255, 255, 0.7);
+}
+
+.terms {
+    display: flex;
+    align-items: center;
+    color: white;
+    font-size: 14px;
+}
+
+.terms input[type="checkbox"] {
+    margin-right: 10px;
+}
+
+.btn {
+    width: 100%;
+    padding: 12px;
+    background-color: #461480;
+    color: white;
+    border: none;
+    border-radius: 5px;
+    font-size: 16px;
+    cursor: pointer;
+    transition: background-color 0.3s ease;
+    margin-top: 15px;
+}
+
+.btn:hover {
+    background-color: #240991;
+}
+
+.login-link {
+    margin-top: 15px;
+    color: white;
+    font-size: 14px;
+}
+
+.login-link a {
+    color: white;
+    text-decoration: underline;
+}
+
+/* Responsive Design */
+@media screen and (max-width: 480px) {
+    .signup-form {
+        width: 90%;
+        margin: 0 auto;
+    }
+}

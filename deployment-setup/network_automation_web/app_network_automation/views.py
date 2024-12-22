@@ -1,8 +1,8 @@
-from django.shortcuts import render, HttpResponse, get_object_or_404, redirect
+from django.shortcuts import render, HttpResponse, get_object_or_404, redirect 
 from .models import Device, Log, DeviceForm
-import datetime
-import paramiko
-import time
+from django.http import JsonResponse
+from .forms import VendorSelectionForm
+import datetime, paramiko, time
 from datetime import datetime
 # from .forms import DeviceForm
 
@@ -148,10 +148,11 @@ def log(request):
     logs = Log.objects.all()
 
     context = {
-        'Log': Log
+        'logs': logs  # Kirimkan data log, bukan model Log
     }
 
     return render(request, 'log.html', context)
+
 
 # View untuk halaman dashboard overview
 def dashboard_overview(request):
@@ -163,31 +164,120 @@ def dashboard_overview(request):
         'all_device': all_device,  # Menampilkan semua perangkat
     }
 
-    
-
-    return render(request, 'dashboard_overview.html', context)  # Render halaman daftar perangkat
-    
-    
-def add_device(request):
-    if request.method == 'POST':
-        form = DeviceForm(request.POST)
-        if form.is_valid():
-            # Validasi: Pastikan IP tidak tercampur antar vendor
-            vendor = form.cleaned_data['vendor']
-            ip_address = form.cleaned_data['ip_address']
-
-            if Device.objects.filter(vendor=vendor, ip_address=ip_address).exists():
-                form.add_error('ip_address', 'This IP Address already exists for the selected vendor.')
-            else:
-                form.save()
-                return redirect('device_list')  # Redirect ke halaman daftar perangkat
-
-    else:
-        form = DeviceForm()
-
-    return render(request, 'add_device.html', {'form': form})
+    return render(request, 'Dashboard/dashboard_overview.html', context)  # Render halaman daftar perangkat
 
 
-def device_list(request):
-    devices = Device.objects.all()
-    return render(request, 'device_list.html', {'devices': devices})
+
+def get_devices_by_vendor(request):
+    vendor = request.GET.get('vendor')
+    if vendor:
+        devices = Device.objects.filter(vendor=vendor)
+        device_data = [{'id': device.id, 'ip_address': device.ip_address, 'hostname': device.hostname} for device in devices]
+        return JsonResponse({'devices': device_data})
+    return JsonResponse({'devices': []})
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+# def get_ip_by_vendor(request):
+#     # View untuk mendapatkan IP Address berdasarkan vendor
+#     vendor = request.GET.get('vendor')  # Ambil vendor dari permintaan AJAX
+#     devices = Device.objects.filter(vendor=vendor)  # Filter perangkat berdasarkan vendor
+#     ip_addresses = list(devices.values('id', 'ip_address'))  # Ambil daftar IP Address
+#     return JsonResponse({'ip_addresses': ip_addresses})
+
+# def input_device_type(request):
+#     if request.method == 'POST':
+#         form = DeviceForm(request.POST)
+#         if form.is_valid():
+#             device = form.save()  # Simpan data perangkat ke database
+            
+#             # Tambahkan log konfigurasi perangkat
+#             log = Log(
+#                 target=device.ip_address,
+#                 action=f"Configure {device.vendor} device",
+#                 status="Success",
+#                 time=datetime.now(),
+#                 messages="Device configured successfully"
+#             )
+#             log.save()
+            
+#             return redirect('device_success')
+#     else:
+#         form = DeviceForm()
+
+#     return render(request, 'Dashboard/dashboard_overview.html', {'form': form})
+
+# def device_success(request):
+#     return render(request, 'Dashboard/dashboard_overview.html')
+
+# def configure_device(request):
+#     # View untuk menampilkan form konfigurasi perangkat
+#     devices = Device.objects.all()
+#     return render(request, 'Dashboard/dashboard_overview.html', {'devices': devices})
+
+
+# def add_device(request):
+#     if request.method == 'POST':
+#         form = DeviceForm(request.POST)
+#         if form.is_valid():
+#             # Validasi: Pastikan IP tidak tercampur antar vendor
+#             vendor = form.cleaned_data['vendor']
+#             ip_address = form.cleaned_data['ip_address']
+
+#             if Device.objects.filter(vendor=vendor, ip_address=ip_address).exists():
+#                 form.add_error('ip_address', 'This IP Address already exists for the selected vendor.')
+#             else:
+#                 form.save()
+#                 return redirect('device_list')  # Redirect ke halaman daftar perangkat
+
+#     else:
+#         form = DeviceForm()
+
+#     return render(request, 'add_device.html', {'form': form})
+
+
+# def device_list(request):
+#     devices = Device.objects.all()
+#     return render(request, 'device_list.html', {'devices': devices})
