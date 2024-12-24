@@ -9,7 +9,6 @@
     <title>Network Configuration Management</title>
     <link rel="stylesheet" href="{% static 'images/css/netconf.css' %}">
     <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
-    <!-- Pastikan jQuery sudah di-include -->
     <link href="https://cdnjs.cloudflare.com/ajax/libs/select2/4.0.13/css/select2.min.css" rel="stylesheet" />
     <script src="https://cdnjs.cloudflare.com/ajax/libs/select2/4.0.13/js/select2.min.js"></script>
 </head>
@@ -37,52 +36,34 @@
         </div>
 
         <div class="container">
-            <div class="box">
-                <!-- Dropdown untuk memilih vendor -->
-                <label for="vendor">Pilih Vendor</label>
-                <select id="vendor" class="form-control">
-                    <option value="">Pilih Vendor</option>
-                    <option value="cisco">Cisco</option>
-                    <option value="mikrotik">Mikrotik</option>
-                </select>
+            <form method="POST">
+                {% csrf_token %}
 
-                <!-- Dropdown untuk memilih IP perangkat berdasarkan vendor yang dipilih -->
-                <label for="device_ip">Pilih Perangkat</label>
-                <select id="device_ip" class="form-control" disabled>
-                    <option value="">Pilih Perangkat</option>
-                </select>
+                <div class="box">
+                    <!-- Dropdown untuk memilih vendor -->
+                    <label for="vendor">Pilih Vendor</label>
+                    <select id="vendor" name="vendor" class="form-control">
+                        <option value="">Pilih Vendor</option>
+                        <option value="cisco">Cisco</option>
+                        <option value="mikrotik">Mikrotik</option>
+                    </select>
 
-                <!-- Command Dropdown -->
-                <label for="command">Perintah</label>
-                <select id="command" class="form-control">
-                    <option value="show_ip_brief">show ip interface brief</option>
-                    <!-- Tambahkan perintah lain sesuai kebutuhan -->
-                </select>
+                    <!-- Daftar perangkat berdasarkan vendor -->
+                    <div id="device_ip_container" class="device-container">
+                        <label>Pilih Perangkat</label>
+                    </div>
 
-                <!-- Command Output -->
-                <h4>Output Perintah</h4>
-                <table class="output-table">
-                    <thead>
-                        <tr>
-                            <th>Interface</th>
-                            <th>IP-Address</th>
-                            <th>OK?</th>
-                            <th>Status</th>
-                            <th>Protocol</th>
-                        </tr>
-                    </thead>
-                    <tbody>
-                        <tr>
-                            <td>GigabitEthernet0/0</td>
-                            <td>172.11.0.1</td>
-                            <td>YES</td>
-                            <td>up</td>
-                            <td>up</td>
-                        </tr>
-                        <!-- Tambahkan data lain sesuai output yang diinginkan -->
-                    </tbody>
-                </table>
-            </div>
+                    <!-- Textarea untuk perintah -->
+                    <h4 class="mt-3">Mikrotik Command</h4>
+                    <textarea class="form-control" rows="5" name="mikrotik_command"></textarea>
+
+                    <h4 class="mt-3">Cisco Command</h4>
+                    <textarea class="form-control" rows="5" name="cisco_command"></textarea>
+
+                    <!-- Tombol submit -->
+                    <button type="submit" class="mt-3 btn btn-primary">Submit</button>
+                </div>
+            </form>
         </div>
 
         <div class="footer">
@@ -92,52 +73,41 @@
 
     <script>
         $(document).ready(function () {
-            // Inisialisasi Select2 untuk dropdown
             $('#vendor').select2({
                 placeholder: "Pilih Vendor",
                 allowClear: true
             });
 
-            // Event listener untuk perubahan vendor
             $('#vendor').change(function () {
-                var vendor = $(this).val(); // Ambil nilai vendor yang dipilih
+                var vendor = $(this).val();
 
-                // Nonaktifkan dropdown perangkat dan bersihkan isinya
-                $('#device_ip').prop('disabled', true).html('<option value="">Pilih Perangkat</option>');
+                $('#device_ip_container').html('<label>Pilih Perangkat</label>');
 
-                // Jika vendor dipilih
                 if (vendor) {
-                    // Kirim permintaan AJAX untuk mendapatkan daftar perangkat berdasarkan vendor
                     $.ajax({
-                        url: "{% url 'get_devices_by_vendor' %}",  // Pastikan URL ini sesuai dengan URL di Django views
-                        data: { vendor: vendor },  // Kirimkan nama vendor sebagai parameter
+                        url: "{% url 'get_devices_by_vendor' %}",
+                        data: { vendor: vendor },
                         dataType: 'json',
                         success: function (data) {
-                            // Kosongkan dropdown perangkat
-                            $('#device_ip').empty();
-
-                            // Cek apakah ada perangkat yang ditemukan
                             if (data.devices && data.devices.length > 0) {
-                                // Aktifkan dropdown perangkat
-                                $('#device_ip').prop('disabled', false);
-
-                                // Tambahkan perangkat ke dropdown
                                 data.devices.forEach(function (device) {
-                                    $('#device_ip').append(`<option value="${device.ip_address}">${device.ip_address} | ${device.hostname}</option>`);
+                                    $('#device_ip_container').append(`
+                                        <div class="checkbox">
+                                            <input type="checkbox" name="device_ip" value="${device.ip_address}" id="device_${device.ip_address}">
+                                            <label for="device_${device.ip_address}">${device.ip_address} | ${device.hostname}</label>
+                                        </div>
+                                    `);
                                 });
                             } else {
-                                // Jika tidak ada perangkat untuk vendor ini
-                                $('#device_ip').prop('disabled', true).html('<option value="">Tidak ada perangkat untuk vendor ini.</option>');
+                                $('#device_ip_container').html('<label>Tidak ada perangkat untuk vendor ini.</label>');
                             }
                         },
                         error: function () {
-                            // Jika terjadi kesalahan saat memuat data
-                            $('#device_ip').prop('disabled', true).html('<option value="">Error saat memuat daftar perangkat.</option>');
+                            $('#device_ip_container').html('<label>Error saat memuat daftar perangkat.</label>');
                         }
                     });
                 } else {
-                    // Jika tidak ada vendor yang dipilih
-                    $('#device_ip').prop('disabled', true).html('<option value="">Pilih vendor untuk melihat perangkat.</option>');
+                    $('#device_ip_container').html('<label>Pilih vendor untuk melihat perangkat.</label>');
                 }
             });
         });

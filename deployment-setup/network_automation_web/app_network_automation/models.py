@@ -1,5 +1,11 @@
 from django.db import models
 from django import forms
+from datetime import datetime
+from django.utils.timezone import now
+
+
+
+
 
 class Device(models.Model):
     ip_address = models.CharField(max_length=255)  # Tabel IP Address
@@ -28,7 +34,7 @@ class Log(models.Model):  # Perbaiki models.model menjadi models.Model
     target = models.CharField(max_length=255)
     action = models.CharField(max_length=255)
     status = models.CharField(max_length=255)
-    time = models.DateTimeField(null=True)  # Gunakan DateTimeField untuk waktu
+    time = models.DateTimeField(default=now)  # Gunakan DateTimeField untuk waktu
     messages = models.CharField(max_length=255, blank=True)  # Perbaiki typo "messeges" menjadi "messages"
 
     def __str__(self):

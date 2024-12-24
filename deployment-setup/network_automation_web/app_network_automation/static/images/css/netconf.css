@@ -176,3 +176,42 @@ label {
 .logo-menu {
     margin-right: 10px;
 }
+
+/* CSS untuk pembungkus kotak */
+.device-container {
+    border: 2px solid #ccc;  /* Garis pembatas kotak */
+    padding: 15px;  /* Memberikan padding di dalam kotak */
+    margin-top: 10px;  /* Memberikan jarak atas */
+    border-radius: 8px;  /* Sudut kotak melengkung */
+    background-color: #f9f9f9;  /* Warna latar belakang kotak */
+}
+
+.device-container label {
+    font-weight: bold;
+    display: block;
+    margin-bottom: 10px;
+}
+
+/* Agar checkbox sejajar */
+.checkbox {
+    display: inline-block;
+    margin-right: 15px;
+    margin-bottom: 10px;
+}
+
+.checkbox label {
+    display: inline-block;
+    margin-left: 5px;
+    vertical-align: middle;
+}
+
+/* Responsif untuk perangkat kecil */
+@media (max-width: 768px) {
+    .device-container {
+        padding: 10px;
+    }
+
+    .checkbox {
+        display: block;  /* Checkbox jadi vertikal pada layar kecil */
+    }
+}

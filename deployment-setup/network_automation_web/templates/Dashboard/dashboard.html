@@ -1,0 +1,115 @@
+{% load static %}
+
+<!DOCTYPE html>
+<html lang="id">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Network Configuration Management</title>
+    <link rel="stylesheet" href="{% static 'images/css/netconf.css' %}">
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/select2/4.0.13/css/select2.min.css" rel="stylesheet" />
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/select2/4.0.13/js/select2.min.js"></script>
+</head>
+
+<body>
+    <!-- Sidebar -->
+    <div class="sidebar">
+        <ul>
+            <li class="menu-item">
+                <a href="#">
+                    <img src="{% static 'images/alfarabi.png' %}" alt="Dashboard Logo" class="logo-menu"> {{ username }}
+                </a>
+            </li>
+            <li class="menu-item">
+                <a href="#">
+                    <img src="{% static 'images/dashboard_logo.png' %}" alt="Dashboard Logo" class="logo-menu"> Dashboard
+                </a>
+            </li>
+            <li class="menu-item">
+                <a href="#">
+                    <img src="{% static 'images/network_config.png' %}" alt="Network Configuration Logo" class="logo-menu"> Configuration
+                </a>
+            </li>
+            <li class="menu-item">
+                <a href="#">
+                    <img src="{% static 'images/monitoring.png' %}" alt="Monitoring Device Logo" class="logo-menu"> Monitoring Device
+                </a>
+            </li>
+            <li class="menu-item">
+                <a href="#">
+                    <img src="{% static 'images/member.png' %}" alt="Member Logo" class="logo-menu"> Member
+                </a>
+            </li>
+            <li class="menu-item">
+                <a href="#">
+                    <img src="{% static 'images/list.png' %}" alt="Device List Logo" class="logo-menu"> Device List
+                </a>
+            </li>
+            <li class="menu-item">
+                <a href="#">
+                    <img src="{% static 'images/Alerting.png' %}" alt="Alerting Logo" class="logo-menu"> Alerting
+                </a>
+            </li>
+            <li class="menu-item">
+                <a href="#">
+                    <img src="{% static 'images/report.png' %}" alt="Report Generate Logo" class="logo-menu"> Report Generate
+                </a>
+            </li>
+            <li class="menu-item">
+                <a href="#">
+                    <img src="{% static 'images/history.png' %}" alt="History Logo" class="logo-menu"> History
+                </a>
+            </li>
+        </ul>
+    </div>
+
+    <!-- Main Content -->
+    <div class="container">
+        <div class="grid">
+            <div class="card">
+                <div class="card-body">
+                    <h5 class="card-title">Special title treatment</h5>
+                    <p class="card-text">With supporting text below as a natural lead-in to additional content.</p>
+                    <a href="#" class="btn btn-primary">Go somewhere</a>
+                </div>
+            </div>
+            <div class="card">
+                <div class="card-body">
+                    <h5 class="card-title">Special title treatment</h5>
+                    <p class="card-text">With supporting text below as a natural lead-in to additional content.</p>
+                    <a href="#" class="btn btn-primary">Go somewhere</a>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <style>
+        .container {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 20px;
+            padding: 20px;
+        }
+
+        .card {
+            border: 1px solid #ddd;
+            border-radius: 8px;
+            box-shadow: 0 2px 4px rgba(255, 32, 32, 0.1);
+            padding: 20px;
+        }
+
+        .card-body {
+            display: flex;
+            flex-direction: column;
+            align-items: start;
+        }
+
+        .btn {
+            margin-top: 10px;
+        }
+    </style>
+</body>
+
+</html>

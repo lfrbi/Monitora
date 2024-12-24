@@ -4,6 +4,7 @@ from django.http import JsonResponse
 from .forms import VendorSelectionForm
 import datetime, paramiko, time
 from datetime import datetime
+
 # from .forms import DeviceForm
 
 
@@ -12,11 +13,13 @@ def home(request):
     all_device = Device.objects.all()  # Variabel untuk mendapatkan total perangkat
     cisco_device = Device.objects.filter(vendor="cisco")  # Filter perangkat Cisco
     mikrotik_device = Device.objects.filter(vendor="mikrotik")  # Filter perangkat Mikrotik
+    last_event = Log.objects.all().order_by('-id')[:10]
 
     context = {  # Data untuk template [tipe dictionary]
         'all_device': len(all_device),  # Menjumlahkan Total perangkat aktif
         'cisco_device': len(cisco_device),  # Menghitung total perangkat Cisco
         'mikrotik_device': len(mikrotik_device),  # Menghitung total perangkat Mikrotik
+        'last_event' : last_event
     }
     return render(request, 'home.html', context)  # Render halaman dengan data
 
@@ -36,9 +39,10 @@ def devices(request):
 # View untuk konfigurasi perangkat
 def configure(request):
     if request.method == 'POST':
-        selected_device_id = request.POST.getlist('device')  # Mengambil daftar ID perangkat yang dipilih
+        # Mengambil daftar ID perangkat yang dipilih
+        selected_device_id = request.POST.getlist('device')
         mikrotik_commands = request.POST['mikrotik_command'].splitlines()  # Perintah Mikrotik (split per baris)
-        cisco_commands = request.POST['cisco_command'].splitlines()  # Perintah Cisco (split per baris)
+        cisco_commands = request.POST['cisco_command'].splitlines()        # Perintah Cisco (split per baris)
 
         for device_id in selected_device_id:  # Loop untuk setiap ID perangkat
             dev = get_object_or_404(Device, pk=device_id)  # Ambil data perangkat berdasarkan ID
@@ -48,49 +52,65 @@ def configure(request):
             try:
                 # Connect ke perangkat menggunakan SSH
                 ssh_client.connect(
-                    hostname=dev.ip_address, 
-                    username=dev.username, 
-                    password=dev.password, 
+                    hostname=dev.ip_address,
+                    username=dev.username,
+                    password=dev.password,
                     port=dev.ssh_port
                 )
-                
+
                 # Konfigurasi untuk perangkat Cisco
                 if dev.vendor.lower() == 'cisco':
                     conn = ssh_client.invoke_shell()
                     conn.send('conf t\n')
                     for cmd in cisco_commands:  # Kirim perintah Cisco
                         conn.send(cmd + "\n")
-                        time.sleep(2)  # Delay untuk setiap perintah
+                        time.sleep(1)  # Delay untuk setiap perintah (jika diperlukan)
+
                 # Konfigurasi untuk perangkat Mikrotik
                 elif dev.vendor.lower() == 'mikrotik':
                     for cmd in mikrotik_commands:  # Kirim perintah Mikrotik
                         ssh_client.exec_command(cmd)
-                
-                log = Log(target=dev.ip_address, action='Configure', status="Success", Time=datetime.now(), messages="No Error")
+
+                # Log sukses
+                log = Log(
+                    target=dev.ip_address,
+                    action='Configure',
+                    status="Success",
+                    time=datetime.now(),
+                    messages="Configuration applied successfully"
+                )
                 log.save()
+
             except Exception as e:
+                # Log error jika terjadi exception
                 print(f"Error connecting to {dev.hostname}: {e}")
-                log = Log(target=dev.ip_address, action='Configure', status="Error", Time=datetime.now(), messages=str(e))
+                log = Log(
+                    target=dev.ip_address,
+                    action='Configure',
+                    status="Error",
+                    time=datetime.now(),
+                    messages=str(e)
+                )
                 log.save()
+
             finally:
+                # Tutup koneksi SSH
                 ssh_client.close()
 
         return redirect('home')  # Redirect ke halaman utama setelah konfigurasi selesai
-    
+
     else:
-        devices = Device.objects.all()  # Ambil semua perangkat
+        # Ambil semua perangkat
+        devices = Device.objects.all()
+        vendors = [choice[1] for choice in Device.VENDOR_CHOICES]  # Daftar vendor
+
         context = {
             'devices': devices,
             'mode': 'Configure',  # Menandakan mode konfigurasi
+            'vendors': vendors    # Kirim daftar vendor
         }
-        # Tambahkan daftar vendor ke context
-        vendors = [choice[1] for choice in Device.VENDOR_CHOICES]
-        context = {
-        'devices': devices,
-        'mode': 'Configure',
-        'vendors': vendors,  # Kirim daftar vendor
-}
-        return render(request, 'config.html', context)  # Render halaman konfigurasi perangkat
+        return render(request, 'config.html', context)
+
 
 
 # View untuk verifikasi konfigurasi perangkat
@@ -145,10 +165,11 @@ def verify_config(request):
 
 # View untuk menampilkan log
 def log(request):
+    
     logs = Log.objects.all()
 
     context = {
-        'logs': logs  # Kirimkan data log, bukan model Log
+        'log': logs  # Kirimkan data log, bukan model Log
     }
 
     return render(request, 'log.html', context)
@@ -169,16 +190,44 @@ def dashboard_overview(request):
 
 
 def get_devices_by_vendor(request):
-    vendor = request.GET.get('vendor')
+    vendor = request.GET.get('vendor')  # Mendapatkan vendor dari request (misalnya 'cisco' atau 'mikrotik')
+    
     if vendor:
+        # Ambil data perangkat yang sesuai dengan vendor yang dipilih
         devices = Device.objects.filter(vendor=vendor)
-        device_data = [{'id': device.id, 'ip_address': device.ip_address, 'hostname': device.hostname} for device in devices]
-        return JsonResponse({'devices': device_data})
-    return JsonResponse({'devices': []})
+        device_list = [{"id": device.id, "ip_address": device.ip_address, "hostname": device.hostname} for device in devices]
+        return JsonResponse({"devices": device_list})
+    else:
+        return JsonResponse({"error": "Vendor tidak ditemukan"}, status=400)
 
 
+def add_device(request):
+    if request.method == 'POST':
+        form = DeviceForm(request.POST)
+        if form.is_valid():
+            # Validasi: Pastikan IP tidak tercampur antar vendor
+            vendor = form.cleaned_data['vendor']
+            ip_address = form.cleaned_data['ip_address']
+
+            if Device.objects.filter(vendor=vendor, ip_address=ip_address).exists():
+                form.add_error('ip_address', 'This IP Address already exists for the selected vendor.')
+            else:
+                form.save()
+                return redirect('device_list')  # Redirect ke halaman daftar perangkat
+
+    else:
+        form = DeviceForm()
+
+    return render(request, 'add_device.html', {'form': form})
 
 
+def device_list(request):
+    devices = Device.objects.all()
+    return render(request, 'device_list.html', {'devices': devices})
+
+
+def dashboard(request):
+    return render(request, 'Dashboard/dashboard.html')
 
 
 
@@ -258,26 +307,3 @@ def get_devices_by_vendor(request):
 #     return render(request, 'Dashboard/dashboard_overview.html', {'devices': devices})
 
 
-# def add_device(request):
-#     if request.method == 'POST':
-#         form = DeviceForm(request.POST)
-#         if form.is_valid():
-#             # Validasi: Pastikan IP tidak tercampur antar vendor
-#             vendor = form.cleaned_data['vendor']
-#             ip_address = form.cleaned_data['ip_address']
-
-#             if Device.objects.filter(vendor=vendor, ip_address=ip_address).exists():
-#                 form.add_error('ip_address', 'This IP Address already exists for the selected vendor.')
-#             else:
-#                 form.save()
-#                 return redirect('device_list')  # Redirect ke halaman daftar perangkat
-
-#     else:
-#         form = DeviceForm()
-
-#     return render(request, 'add_device.html', {'form': form})
-
-
-# def device_list(request):
-#     devices = Device.objects.all()
-#     return render(request, 'device_list.html', {'devices': devices})
